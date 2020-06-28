@@ -17,7 +17,7 @@
   <meta name="description" content="">
   <meta name="author" content="hahaha">
   <meta name="keywords" content="">
-  <title>vscode remote SSH + frp - hahaha&#39;s blog</title>
+  <title>Array push, unshift, pop, shift method implementation. - hahaha&#39;s blog</title>
 
   <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.4.1/css/bootstrap.min.css" />
 
@@ -146,7 +146,7 @@
           <div class="container text-center white-text fadeInUp">
             <span class="h2" id="subtitle">
               
-                vscode remote SSH + frp
+                Array push, unshift, pop, shift method implementation.
               
             </span>
 
@@ -154,8 +154,8 @@
               
   <div class="mt-3 post-meta">
     <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-    <time datetime="2020-06-23 20:17">
-      June 23, 2020 pm
+    <time datetime="2020-06-28 09:21">
+      June 28, 2020 am
     </time>
   </div>
 
@@ -165,7 +165,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      777 words
+      898 words
     </span>
   
 
@@ -175,7 +175,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      15
+      17
        min
     </span>
   
@@ -206,89 +206,66 @@
           <div class="post-content mx-auto" id="post">
             
             <article class="markdown-body">
-              <h3 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h3><p>I heard that vscode remote SSH is now fully available. There has been an idea to configure the laboratory machine for remote programming, but teamviewer is a real card, and other methods are not as good as I want. But the sad thing is that the network architecture of the laboratory is NAT, and I don’t know how many levels of routing have been allocated to my machine. Naturally, my machine does not have a public IP, but I remember that my student discount is 10 yuan. The Alibaba Cloud host is still there every month, and there is a public IP, so let’s start the intranet penetration.</p>
-<p>Update: Personally I feel a little tasteless, because I mainly use python to do more scientific calculations, it is better to use jupyter notebook. . . .</p>
-<h3 id="Materials"><a href="#Materials" class="headerlink" title="Materials"></a>Materials</h3><ol>
-<li>One laboratory machine, system: ubuntu 18.04 desktop 2. One cloud server, system: ubuntu 16.04 server 3. One mac.</li>
-</ol>
-<h3 id="Intranet-penetration"><a href="#Intranet-penetration" class="headerlink" title="Intranet penetration"></a>Intranet penetration</h3><p>The principle of intranet penetration is not introduced. I use <a href="https://github.com/fatedier/frp" target="_blank" rel="noopener">github’s open source project frp</a> . First download frp on two Ubuntu machines respectively</p>
-<pre><code class="hljs sh">$ wget https://github.com/fatedier/frp/releases/download/v0.29.0/frp_0.29.0_freebsd_amd64.tar.gz</code></pre>
+              <h3 id="Push-at-the-end-push"><a href="#Push-at-the-end-push" class="headerlink" title="Push at the end (push)"></a>Push at the end (push)</h3><p>It can be seen from the explanation that the push method only needs to put the elements to be added to the end of the array in sequence, and will not change the index of the original array elements. So loop through the parameter list and place the new elements in order at the end of the array.</p>
+<pre><code class="hljs js"><span class="hljs-built_in">Array</span>.prototype._push = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">...value</span>) </span>&#123; <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-built_in">arguments</span>.length; i++) &#123;  
+ <span class="hljs-keyword">this</span>[<span class="hljs-keyword">this</span>.length] = <span class="hljs-built_in">arguments</span>[i]  
+ &#125; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.length  
+&#125;  
+<span class="hljs-keyword">var</span> arr = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]arr._push(<span class="hljs-number">9</span>, <span class="hljs-number">8</span>)  
+<span class="hljs-built_in">console</span>.log(arr) <span class="hljs-comment">// [ 1, 2, 3, 4, 9, 8 ]</span></code></pre>
 
-<p>After downloading the compressed package, unzip it, the name is too long, by the way, rename it</p>
-<pre><code class="hljs sh">$ tar -zxvf frp_0.29.0_freebsd_amd64.tar.gz 
-$ mv frp_0.29.0_freebsd_amd64 frp</code></pre>
+<h3 id="Header-addition-unshift"><a href="#Header-addition-unshift" class="headerlink" title="Header addition (unshift)"></a>Header addition (unshift)</h3><p>Add elements to the head of the array, the length of the array will also change, but unlike the operation at the end, the original element index of the array does not change. To add the head, you need to move the index of the original element to the right.<br>For example, to add only one bit, you need to shift the index of each element of the array to the right one by one, assuming that the original array length is 4, add an element to the head, and the length becomes 5.</p>
+<p>So now it becomes: <code>array.length=5</code>, and currently <code>array[5-1]</code> is the last element, now because it moves backwards in sequence, so <code>array[5]</code> must be the last element<br>so we can Loop forward from the next bit of the last bit of the array , assign <code>array[i]</code> to <code>array[i-1]</code> , loop to 1 to stop, and assign the 0th item of array to the value that needs to be added.</p>
+<p>The process is as follows:</p>
+<p><img src="1.jpg" srcset="/img/loading.gif" alt=""></p>
+<p>Specific code implementation:</p>
+<pre><code class="hljs js"><span class="hljs-built_in">Array</span>.prototype._unshift = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">value</span>) </span>&#123; <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-keyword">this</span>.length; i &gt; <span class="hljs-number">0</span>; i--) &#123;  
+ <span class="hljs-keyword">this</span>[i] = <span class="hljs-keyword">this</span>[i - <span class="hljs-number">1</span>] &#125; <span class="hljs-keyword">this</span>[<span class="hljs-number">0</span>] = value <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.length 
+&#125;  
+<span class="hljs-keyword">var</span> arr = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]arr._unshift(<span class="hljs-number">8</span>)  
+  
+<span class="hljs-built_in">console</span>.log(arr); <span class="hljs-comment">// [ 8, 1, 2, 3, 4 ]</span></code></pre>
 
-<p>Then modify the server’s configuration file</p>
-<pre><code class="hljs sh">$ <span class="hljs-built_in">cd</span> frp 
-$ vi frps.ini</code></pre>
+<p>However, the above code only implements the addition of an element header, and the unshift method supports adding multiple elements. E.g:</p>
+<pre><code class="hljs js"><span class="hljs-keyword">var</span> arr = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]arr.unshift(<span class="hljs-number">8</span>, <span class="hljs-number">7</span>)  
+<span class="hljs-built_in">console</span>.log(arr); <span class="hljs-comment">// [ 8, 7, 1, 2, 3, 4 ]</span></code></pre>
 
-<p>The content is saved as follows:</p>
-<pre><code class="hljs ini"><span class="hljs-comment"># frps.ini </span>
-<span class="hljs-section">[common]</span> 
-<span class="hljs-attr">bind_port</span> = <span class="hljs-number">7000</span></code></pre>
+<p>For such a situation, you need to know that several parameters are passed in. You can start with the arguments object. The idea is still the above idea.</p>
+<p>The length of the new array is equal to the length of the original array + the number of parameters, looping from back to front, moving the last bit of the original array to the last bit of the new array,<br>because the number of input parameters is required to be inserted in the head Element, so the starting point of the loop is the length of the original array + the number of parameters, and the end point of the loop is the number of input parameters.<br>But since the index is always one bit less than the length, the start and end points need to be decremented by 1.</p>
+<p>Now you can write the logic of circular movement first.</p>
+<pre><code class="hljs js"><span class="hljs-built_in">Array</span>.prototype._unshift = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">...value</span>) </span>&#123; <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = (<span class="hljs-keyword">this</span>.length + <span class="hljs-built_in">arguments</span>.length - <span class="hljs-number">1</span>); i &gt; <span class="hljs-built_in">arguments</span>.length - <span class="hljs-number">1</span>; i--) &#123; <span class="hljs-keyword">this</span>[i] = <span class="hljs-keyword">this</span>[i - <span class="hljs-built_in">arguments</span>.length]  
+ &#125;&#125;</code></pre>
 
-<p>Then run the frp server in the background</p>
-<pre><code class="hljs sh">$ nohup ./frps -c ./frps.ini &amp;</code></pre>
-<p>Then modify the configuration of the client (ie the laboratory machine), first enter the location where our client frp is decompressed</p>
-<pre><code class="hljs sh">$ <span class="hljs-built_in">cd</span> frp</code></pre>
+<p>Think again, because the previous step has been moved, the position of the array head has been vacated, the second step is to insert a few elements with several parameters. So now you only need to insert in a loop:</p>
+<pre><code class="hljs js"><span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> k = <span class="hljs-number">0</span>; k &lt; <span class="hljs-built_in">arguments</span>.length; k++) &#123;  
+<span class="hljs-keyword">this</span>[k] = <span class="hljs-built_in">arguments</span>[k]  
+&#125;</code></pre>
 
-<p>Change setting</p>
-<pre><code class="hljs sh">$ vi frpc.ini is</code></pre>
+<p>The complete code is as follows:</p>
+<pre><code class="hljs js"><span class="hljs-built_in">Array</span>.prototype._unshift = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">...value</span>) </span>&#123; <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = (<span class="hljs-keyword">this</span>.length + <span class="hljs-built_in">arguments</span>.length - <span class="hljs-number">1</span>); i &gt; <span class="hljs-built_in">arguments</span>.length - <span class="hljs-number">1</span>; i--) &#123; <span class="hljs-keyword">this</span>[i] = <span class="hljs-keyword">this</span>\[i - <span class="hljs-built_in">arguments</span>.length]  
+ &#125; <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> k = <span class="hljs-number">0</span>; k &lt; <span class="hljs-built_in">arguments</span>.length; k++) &#123;  
+ <span class="hljs-keyword">this</span>[k] = <span class="hljs-built_in">arguments</span>[k] &#125; <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.length  
+&#125;  
+<span class="hljs-keyword">var</span> arr = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>\]arr._unshift(<span class="hljs-number">9</span>, <span class="hljs-number">8</span>)  
+<span class="hljs-built_in">console</span>.log(arr); <span class="hljs-comment">// [ 9, 8, 1, 2, 3, 4 ]</span></code></pre>
 
-<p>The content is saved as follows</p>
-<pre><code class="hljs ini"><span class="hljs-comment"># frpc.ini</span>
-<span class="hljs-section">[common]</span>
-<span class="hljs-attr">server_addr</span> = x.x.x.x
-<span class="hljs-attr">server_port</span> = <span class="hljs-number">7000</span>
+<h3 id="Tail-deletion-pop"><a href="#Tail-deletion-pop" class="headerlink" title="Tail deletion (pop)"></a>Tail deletion (pop)</h3><p>This is very easy to achieve, you can do it step by step according to the definition. First, record the last element to facilitate the return, then delete the last element from the array,</p>
+<p>point it to null and release, then reduce the length of the array by 1, and finally judge whether it is an empty array.</p>
+<pre><code class="hljs js"><span class="hljs-built_in">Array</span>.prototype._pop = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>&#123; <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.length) &#123;  
+ <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>  
+ &#125; <span class="hljs-keyword">var</span> end = <span class="hljs-keyword">this</span>[<span class="hljs-keyword">this</span>.length - <span class="hljs-number">1</span>] <span class="hljs-keyword">this</span>[<span class="hljs-keyword">this</span>.length - <span class="hljs-number">1</span>] = <span class="hljs-literal">null</span> <span class="hljs-keyword">this</span>.length = <span class="hljs-keyword">this</span>.length - <span class="hljs-number">1</span> <span class="hljs-keyword">return</span> end&#125;  
+  
+<span class="hljs-keyword">var</span> arr = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]arr._pop()  
+<span class="hljs-built_in">console</span>.log(arr); <span class="hljs-comment">// [ 1, 2, 3 ]</span></code></pre>
 
-<span class="hljs-section">[ssh]</span>
-<span class="hljs-attr">type</span> = tcp
-<span class="hljs-attr">local_ip</span> = <span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>
-<span class="hljs-attr">local_port</span> = <span class="hljs-number">22</span>
-<span class="hljs-attr">remote_port</span> = <span class="hljs-number">6000</span></code></pre>
+<h3 id="Head-shift-shift"><a href="#Head-shift-shift" class="headerlink" title="Head shift (shift)"></a>Head shift (shift)</h3><p>Header deletion will change the index of the original array element, that is, move the index of the element that has not been deleted to the left. First, record the deleted element for easy return, and then point the first element of the array to null , And<br>finally loop through the array and move the index.</p>
+<pre><code class="hljs js"><span class="hljs-built_in">Array</span>.prototype._shift = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) </span>&#123; <span class="hljs-keyword">if</span> (!<span class="hljs-keyword">this</span>.length) &#123;  
+ <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>  
+ &#125; <span class="hljs-keyword">var</span> start = <span class="hljs-keyword">this</span>[<span class="hljs-number">0</span>] <span class="hljs-keyword">this</span>[<span class="hljs-number">0</span>] = <span class="hljs-literal">null</span> <span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-keyword">this</span>.length - <span class="hljs-number">1</span>; i++) &#123; <span class="hljs-keyword">this</span>[i] = <span class="hljs-keyword">this</span>[i + <span class="hljs-number">1</span>] &#125; <span class="hljs-keyword">this</span>.length = <span class="hljs-keyword">this</span>.length - <span class="hljs-number">1</span> <span class="hljs-keyword">return</span> start&#125;  
+  
+<span class="hljs-keyword">var</span> arr = [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>]arr._shift()  
+<span class="hljs-built_in">console</span>.log(arr); <span class="hljs-comment">// [ 2, 3, 4 ]</span></code></pre>
 
-<p>After the above configuration is completed, we need to configure Alibaba Cloud server security group rules to expose ports 7000 and 6000. See how this part of the operation <a href="https://help.aliyun.com/document_detail/25471.html" target="_blank" rel="noopener"> Ali cloud Related Documents </a> Note that the agreement to set up custom tcp, authorization object can be set to <code>0.0.0.0/0</code> server After the port is exposed, you can start the client’s intranet penetration program</p>
-<pre><code class="hljs sh">$ nohup ./frpc -c ./frpc.ini &amp;</code></pre>
-<p>After this operation, you can ssh to the laboratory machine on the mac with the following command</p>
-<pre><code class="hljs sh">$ ssh -oPort=6000 username@server<span class="hljs-string">'s ip</span></code></pre>
-
-<h3 id="Configure-ssh-password-free-login"><a href="#Configure-ssh-password-free-login" class="headerlink" title="Configure ssh password-free login"></a>Configure ssh password-free login</h3><p>After the above steps are completed, you can ssh to connect to the laboratory machine, but vscode remote ssh requires a public key to log in without password. First generate my public key on mac</p>
-<pre><code class="hljs sh">$ ssh-keygen</code></pre>
-
-<p>You need to enter some information. If you want to save trouble, just enter the box except the mailbox.</p>
-<pre><code class="hljs sh">$ vi ~/.ssh/id_rsa.pub</code></pre>
-
-<p>Copy everything inside, this is mac’s public key. Next, I need to find a way to copy the public key to the laboratory machine. I first placed it on the server, connected it to the server with the laboratory machine and then copied it, because the server also added a secret login to my mac.   (however, the security issue of using this public key is your own consideration, I think it is not a big problem)</p>
-<p>Next on the laboratory machine</p>
-<pre><code class="hljs sh">$ vi /etc/ssh/sshd_config</code></pre>
-
-<p>Make sure to have the following lines</p>
-<pre><code class="hljs ini">RSAAuthentication yes
-PubkeyAuthentication yes
-AuthorizedKeysFile  .ssh/authorized_keys</code></pre>
-
-<p>If it is no, change to yes, if not, add</p>
-<pre><code class="hljs sh">$ vi .ssh/authorized_keys</code></pre>
-
-<p>Add the public key lab machine just copied from the mac and restart ssh</p>
-<pre><code class="hljs sh">$ service sshd restart</code></pre>
-
-<p>The following commandssh to the laboratory machine on mac without filling in the password</p>
-<pre><code class="hljs sh">$ ssh -oPort=6000 username@server<span class="hljs-string">'s ip</span></code></pre>
-
-
-
-<h3 id="vscode-remote-ssh-configuration"><a href="#vscode-remote-ssh-configuration" class="headerlink" title="vscode remote ssh configuration"></a>vscode remote ssh configuration</h3><p>After making sure that the mac can log in to the laboratory machine secretly, the next step is very simple, just refer to these two articles <a href="https://code.visualstudio.com/docs/remote/ssh" target="_blank" rel="noopener"> Official Document </a> <a href="https://zhuanlan.zhihu.com/p/64849549" target="_blank" rel="noopener"> 知知上Of </a></p>
-<p>First go to the vscode plugin market to install the plugin:</p>
-<p><img src="1.png" srcset="/img/loading.gif" alt=""></p>
-<p>After installing the plugin, click <code>Add Host</code></p>
-<p><img src="2.png" srcset="/img/loading.gif" alt=""></p>
-<p>Enter host ssh address</p>
-<p><img src="3.png" srcset="/img/loading.gif" alt=""></p>
-<p>Waiting for the connection to complete, we can access the host at home to realize remote development.</p>
-<p><img src="4.png" srcset="/img/loading.gif" alt=""></p>
-<p><img src="5.png" srcset="/img/loading.gif" alt=""></p>
-<h3 id="Experience"><a href="#Experience" class="headerlink" title="Experience"></a>Experience</h3><p>Personally, I feel that the design is very good. If it is only used in a local area network, it should be quite easy to use. However, the use of forced intranet penetration to achieve remote development. First, the bandwidth of the relay server limits the speed of SSH. The second is that I think we have a good rest when we rest, always thinking that remote development is really unnecessary.</p>
 
             </article>
             <hr>
@@ -306,9 +283,9 @@ AuthorizedKeysFile  .ssh/authorized_keys</code></pre>
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/vscode-frp/">vscode frp</a>
+                      <a class="hover-with-bg" href="/tags/js/">js</a>
                     
-                      <a class="hover-with-bg" href="/tags/ssh/">ssh</a>
+                      <a class="hover-with-bg" href="/tags/JavaScript/">JavaScript</a>
                     
                   </div>
                 
@@ -319,18 +296,12 @@ AuthorizedKeysFile  .ssh/authorized_keys</code></pre>
                   <div class="post-prev col-6">
                     
                     
-                      <a href="/4/">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Array push, unshift, pop, shift method implementation.</span>
-                        <span class="visible-mobile">Previous</span>
-                      </a>
-                    
                   </div>
                   <div class="post-next col-6">
                     
                     
-                      <a href="/3/">
-                        <span class="hidden-mobile">Talk about Apple WWDC 2020</span>
+                      <a href="/2/">
+                        <span class="hidden-mobile">vscode remote SSH + frp</span>
                         <span class="visible-mobile">Next</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
